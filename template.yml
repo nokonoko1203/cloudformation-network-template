@@ -1,0 +1,228 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: template of building network
+
+Parameters:
+  VpcCidrBlock:
+    Description: Input a VPC IPv4 CidrBlock. ex) 192.168.0.0/20
+    Type: String
+    Default: "192.168.0.0/20"
+
+  VpcName:
+    Description: Input a VPC name. This Parameter will be a Name tag.
+    Type: String
+    Default: "my-vpc"
+
+  AZa:
+    Description: Input a AZ where Public Subnet will be created.
+    Type: AWS::EC2::AvailabilityZone::Name
+
+  AZc:
+    Description: Input a AZ where Public Subnet will be created.
+    Type: AWS::EC2::AvailabilityZone::Name
+
+  PublicSubnetCidrBlockA:
+    Description: Input a Public Subnet IPv4 CidrBlock. ex) 192.168.0.0/24
+    Type: String
+    Default: "192.168.0.0/24"
+
+  PublicSubnetCidrBlockC:
+    Description: Input a Public Subnet IPv4 CidrBlock. ex) 192.168.0.0/24
+    Type: String
+    Default: "192.168.1.0/24"
+
+  PrivateSubnetCidrBlockA:
+    Description: Input a Public Subnet IPv4 CidrBlock. ex) 192.168.0.0/24
+    Type: String
+    Default: "192.168.2.0/24"
+
+  PrivateSubnetCidrBlockC:
+    Description: Input a Public Subnet IPv4 CidrBlock. ex) 192.168.0.0/24
+    Type: String
+    Default: "192.168.3.0/24"
+
+  PublicSubnetNameA:
+    Description: Input a Public Subnet name. This Parameter will be a Name tag.
+    Type: String
+    Default: "my-public-subnet-a"
+
+  PublicSubnetNameC:
+    Description: Input a Public Subnet name. This Parameter will be a Name tag.
+    Type: String
+    Default: "my-public-subnet-c"
+
+  PrivateSubnetNameA:
+    Description: Input a Public Subnet name. This Parameter will be a Name tag.
+    Type: String
+    Default: "my-private-subnet-a"
+
+  PrivateSubnetNameC:
+    Description: Input a Public Subnet name. This Parameter will be a Name tag.
+    Type: String
+    Default: "my-private-subnet-c"
+
+  IGWName:
+    Description: Input a IntenetGateway name. This Parameter will be a Name tag.
+    Type: String
+    Default: "my-igw"
+
+  RouteTableName:
+    Description: Input a RouteTable name. This Parameter will be a Name tag.
+    Type: String
+    Default: "my-route-table"
+
+  SGName:
+    Description: Input a SecurityGroupName name.
+    Type: String
+    Default: "my-security-group-name"
+
+  SGDescription:
+    Description: Input a SecurityGroupDescription.
+    Type: String
+    Default: "my-security-group-description"
+
+  DBName:
+    Description: Input a database name.
+    Type: String
+    Default: "my_database_name"
+
+  MasterUsername:
+    Description: Input a MasterUser name.
+    Type: String
+    Default: "postgres"
+
+  DBInstanceClass:
+    Description: Input a DBInstanceClass.
+    Type: String
+    Default: "db.t2.micro"
+
+  AllocatedStorage:
+    Description: Input a AllocatedStorage.
+    Type: String
+    Default: "5"
+
+  MasterUserPassword:
+    Description: Input a MasterUserPassword.
+    Type: String
+    Default: "PassWord_1234"
+
+Resources:
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidrBlock
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: !Ref VpcName
+
+  MyPublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref AZa
+      CidrBlock: !Ref PublicSubnetCidrBlockA
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Ref PublicSubnetNameA
+      VpcId: !Ref MyVPC
+
+  MyPrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref AZa
+      CidrBlock: !Ref PrivateSubnetCidrBlockA
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Ref PrivateSubnetNameA
+      VpcId: !Ref MyVPC
+
+  MyPrivateSubnetC:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref AZc
+      CidrBlock: !Ref PrivateSubnetCidrBlockC
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Ref PrivateSubnetNameC
+      VpcId: !Ref MyVPC
+
+  MyIGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Ref IGWName
+
+  MyVPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref MyIGW
+      VpcId: !Ref MyVPC
+
+  MyRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Ref RouteTableName
+      VpcId: !Ref MyVPC
+
+  MyPublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref MyIGW
+      RouteTableId: !Ref MyRouteTable
+
+  MySubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MyRouteTable
+      SubnetId: !Ref MyPublicSubnetA
+
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Ref SGName
+      GroupDescription: !Ref SGDescription
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 25432
+          ToPort: 25432
+          CidrIp: 0.0.0.0/0
+
+  MyDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: My App DBSubnetGroup for RDS
+      SubnetIds:
+        - !Ref MyPrivateSubnetA
+        - !Ref MyPrivateSubnetC
+
+  MyDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: !Ref DBName
+      MasterUsername: !Ref MasterUsername
+      DBInstanceClass: !Ref DBInstanceClass
+      VPCSecurityGroups:
+        - Ref: MySecurityGroup
+      AllocatedStorage: !Ref AllocatedStorage
+      MasterUserPassword: !Ref MasterUserPassword
+      Engine: postgres
+      EngineVersion: 13.4
+      BackupRetentionPeriod: 0
+      DBSubnetGroupName: !Ref MyDBSubnetGroup
+      MultiAZ: false
+      PubliclyAccessible: false
+      Port: 25432
+    DependsOn: MySecurityGroup

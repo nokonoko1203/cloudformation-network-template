@@ -1,0 +1,86 @@
+[
+  {
+    "ParameterKey": "VpcCidrBlock",
+    "ParameterValue": "192.168.0.0/20"
+  },
+  {
+    "ParameterKey": "VpcName",
+    "ParameterValue": "my-vpc"
+  },
+  {
+    "ParameterKey": "AZa",
+    "ParameterValue": "ap-northeast-1a"
+  },
+  {
+    "ParameterKey": "AZc",
+    "ParameterValue": "ap-northeast-1c"
+  },
+  {
+    "ParameterKey": "PublicSubnetCidrBlockA",
+    "ParameterValue": "192.168.0.0/24"
+  },
+  {
+    "ParameterKey": "PublicSubnetCidrBlockC",
+    "ParameterValue": "192.168.1.0/24"
+  },
+  {
+    "ParameterKey": "PrivateSubnetCidrBlockA",
+    "ParameterValue": "192.168.2.0/24"
+  },
+  {
+    "ParameterKey": "PrivateSubnetCidrBlockC",
+    "ParameterValue": "192.168.3.0/24"
+  },
+  {
+    "ParameterKey": "PublicSubnetNameA",
+    "ParameterValue": "my-public-subnet-a"
+  },
+  {
+    "ParameterKey": "PublicSubnetNameC",
+    "ParameterValue": "my-public-subnet-c"
+  },
+  {
+    "ParameterKey": "PrivateSubnetNameA",
+    "ParameterValue": "my-private-subnet"
+  },
+  {
+    "ParameterKey": "PrivateSubnetNameC",
+    "ParameterValue": "my-private-subnet"
+  },
+  {
+    "ParameterKey": "IGWName",
+    "ParameterValue": "my-igw"
+  },
+  {
+    "ParameterKey": "RouteTableName",
+    "ParameterValue": "my-route-table"
+  },
+  {
+    "ParameterKey": "SGName",
+    "ParameterValue": "my-security-group"
+  },
+  {
+    "ParameterKey": "SGDescription",
+    "ParameterValue": "this is my-security-group"
+  },
+  {
+    "ParameterKey": "DBName",
+    "ParameterValue": "my_database"
+  },
+  {
+    "ParameterKey": "MasterUsername",
+    "ParameterValue": "postgres"
+  },
+  {
+    "ParameterKey": "DBInstanceClass",
+    "ParameterValue": "db.t3.large"
+  },
+  {
+    "ParameterKey": "AllocatedStorage",
+    "ParameterValue": "10"
+  },
+  {
+    "ParameterKey": "MasterUserPassword",
+    "ParameterValue": "PassWord_1234"
+  }
+]
